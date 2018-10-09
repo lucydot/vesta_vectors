@@ -7,33 +7,33 @@ connecting atomic positions before and after an ionic relaxation
 import argparse
 import re
 
-def read_in(settings):
+# def read_in(settings):
 
-    combined_positions = []
-    combined_data = []
+#     combined_positions = []
+#     combined_data = []
 
-    for filename in [settings.initial_filename, settings.final_filename]:
-    	data = open(filename,'r').read()
-    	combined_data.append(data)
+#     for filename in [settings.initial_filename, settings.final_filename]:
+#     	data = open(filename,'r').read()
+#     	combined_data.append(data)
 
-		match = re.search("", data)
-    	if match:
-    		positions =  float(match.groups()[0])
-   	 	else:
-    		error("Invalid file format (I am only able to parse Vesta files)")
+# 		match = re.search("", data)
+#     	if match:
+#     		positions =  float(match.groups()[0])
+#    	 	else:
+#     		error("Invalid file format (I am only able to parse Vesta files)")
 
-    	positions = [[]]
-    	combined_positions.append(positions)
+#     	positions = [[]]
+#     	combined_positions.append(positions)
 
-    assert (len(combined_positions[0])==len(combined_positions[1]),"""different number of
-    	atoms in initial and final files""")
+#     assert (len(combined_positions[0])==len(combined_positions[1]),"""different number of
+#     	atoms in initial and final files""")
 
-    data = {initial_data: combined_data[0];
-    		final_data: combined_data[1];
-    		initial_positions: combined_positions[0]; 
-    		final_positions: combined_positions[1]}
+#     data = {initial_data: combined_data[0];
+#     		final_data: combined_data[1];
+#     		initial_positions: combined_positions[0]; 
+#     		final_positions: combined_positions[1]}
 
-    return data
+#     return data
 
 # def calc_displacement(data):
 
