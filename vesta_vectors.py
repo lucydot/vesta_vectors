@@ -1,7 +1,11 @@
 #! /usr/bin/env python3
 """
 Create a vesta file which contains vectors 
-connecting atomic positions before and after an ionic relaxation
+connecting atomic positions before and after an ionic relaxation.
+For constant cell volume and shape.
+It does not know which route the atom took,
+but assumes that if over half a lattice length
+that is moved into another neighbouring cell.
 """
 
 import argparse
@@ -41,14 +45,19 @@ def read_in(settings):
 
 	assert len(combined_positions[0])==len(combined_positions[1]),"Unequal number of atoms before and after relaxation"
 
+	struct_match=re.findall(r"CELLP\n\s+(\d+\.\d+\s+\d+\.\d+\s+\d+\.\d+\s+)",combined_data[0])[0]
+	data["cell_lengths"] = [float(x) for x in struct_match.split()]
+
     return data
 
 def calc_displacement(data):
 
- 	displacement_frac = np.subtract(combined_positions[1],combined_positions[0])
- 	displacement_angs = 
+	displacement_frac = np.subtract(combined_positions[1],combined_positions[0])
+	displacement_frac_adjusted = [[-(1-x) if (x>0.5) else x for x in line] for line in displacement_frac]
+	displacement_angs = np.multiply(displacement_frac_adjusted,data["cell_lengths"])
  	return displacement_angs
- 	# what about non-cubic cells?
+ 	# what about non-cubic cells? should be fine ---> important that cell shape does not change
+ 	# how to handle displacement when atoms move into neighbouring cells?
 
 def print_to_file(data,settings):
 
