@@ -58,17 +58,20 @@ A Vesta file that contains vectors connecting the initial and final atomic posit
 
 ### Example
 
-Example input (`initial.vesta`, `final.vesta`) and output (`vectors.vesta`) data is contained in the `./data` folder.
+Example input (`initial.vesta`, `final.vesta`) and output (`vectors.vesta`) data for a CdTe cell is contained in the `./data` folder.
 
-``` python3 vesta_vectors.py -f ./data/initial.vesta ./data/final.vesta -ar 512 ```
+``` python3 vesta_vectors.py -f ./data/initial.vesta ./data/final.vesta -ar 512 -ca 512 ```
 
-This will generate the file `vectors.vesta`. The argument `-ar` is used because the final structure file has a vacancy defect; atom number 512 has been removed from the initial structure file. 
+This will generate the file `vectors.vesta`. The argument `-ar` is used because the final structure file has a Te vacancy defect; atom number 512 has been removed from the initial structure file. The argument `-ca` is used because we want the output structure to be centred around this defect.
+
 When the output file `vectors.vesta` is opened in Vesta, you will see the following:
 
-.....
+![](./images/image1.png)
 
 All the atoms and bonds are removed so that the vectors can be seen clearly.
-It is easy to adjust the visuals via Vesta to produce something nicer:
+It is easy to adjust this, and other visuals, via Vesta - for example:
+
+![](./images/image2.png)
 
 ### Warnings!
  - This script has not been extensively tested - use at your own risk and check that the final vectors make sense.
