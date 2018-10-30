@@ -14,9 +14,46 @@ A Vesta file that contains vectors connecting the initial and final atomic posit
 
 ### Command line options
 ```
--f --filenames  
+-f  --filenames  
+      description: name of initial and final Vesta files
+      type: string  
+      default: initial.vesta final.vesta
+      
+-r  --radius   
+      description: vector radius (in angstrom)
+      type: float
+      default: 1.0
+      
+-c  --colour
       description: vector colour (in RGB)
+      type: list(int)
       default: [255,0,0]
+      
+-x  --cutoff
+      description: vectors with a modulus below this value will not be displayed (in angstrom)
+      type: float
+      default: 0.05
+      
+-sf --scale_factor
+      description: scale all vector moduli by this amount
+      type: float
+      default: 1.0
+      
+-ca --centre_atom
+      description: the output Vesta structure is centred around an atom in the initial structure, specified by this index position (indexing from one)
+      type: int
+      default: None
+      
+-ar --atoms_removed
+      description: index position of atoms in initial structure which have been removed in final structure (indexing from one)
+      type: list(int)
+      default: []
+      
+-ai --atoms_inserted
+      description: index position of atoms which have been inserted into the final structure (indexing from one)
+      type: list(int)
+      default: []      
+
 ```
 
 ### Example
