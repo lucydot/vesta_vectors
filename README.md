@@ -29,7 +29,7 @@ All the atoms and bonds are removed so that the vectors can be seen clearly.
 It is easy to adjust the visuals via Vesta to produce something nicer:
 
 ### Warnings!
- - This script has not been extensively tested - use at your own risk and check that the final vectors make sense!
+ - This script has not been extensively tested - use at your own risk and check that the final vectors make sense.
  - The atoms must appear in the same order in the initial and final vesta files (it is possible to specify which atoms have been added or removed, if any)
  - It is assumed that there has been no change in cell volume or shape.
 
