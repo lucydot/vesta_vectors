@@ -77,4 +77,4 @@ It is easy to adjust the visuals via Vesta to produce something nicer:
 
 ### Bugs
 
-If vesta_vectors.py is not behaving as you expect, please [raise an issue]().
+If vesta_vectors.py is not behaving as you expect, please [raise an issue](https://github.com/lucydot/vesta_vectors/issues).
