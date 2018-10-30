@@ -13,6 +13,11 @@ Two Vesta files: one for the initial structure (before relaxation), and one for 
 A Vesta file that contains vectors connecting the initial and final atomic positions.
 
 ### Command line options
+```
+-f --filenames  
+      description: vector colour (in RGB)
+      default: [255,0,0]
+```
 
 ### Example
 
