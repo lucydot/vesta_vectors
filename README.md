@@ -32,7 +32,7 @@ A Vesta file that contains vectors connecting the initial and final atomic posit
 -x  --cutoff
       description: vectors with a modulus below this value will not be displayed (in angstrom)
       type: float
-      default: 0.05
+      default: 0.1
       
 -sf --scale_factor
       description: scale all vector moduli by this amount
