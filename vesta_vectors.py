@@ -80,9 +80,11 @@ def print_to_file(data,settings):
             VECTR_str += "{0} {1} {2} {3} 0\n {0} 0 0 0 0\n 0 0 0 0 0\n".format(i+1,atom[0],atom[1],atom[2]) # create vectors
     
     VECTT_str=r"\1 "
-    for i,atom in enumerate(data["vectors"]):
+    i=1
+    for atom in data["vectors"]:
         if np.linalg.norm(atom) > settings.cutoff: # only create vector if more than cutoff modulus
-            VECTT_str += "{0} {1} {2} {3} {4} 0\n".format(i+1,settings.radius, settings.colour[0], settings.colour[1], settings.colour[2]) # set vector radius and colour
+            VECTT_str += "{0} {1} {2} {3} {4} 0\n".format(i,settings.radius[0], settings.colour[0], settings.colour[1], settings.colour[2]) # set vector radius and colour
+            i+=1
 
     ATOMT_match = re.search(r"ATOMT.*SCENE",data["initial_data"],flags=re.S)[0]  
     ATOMT_corrected = re.sub(r'([a-zA-Z]+\s+)\d+\.\d+',r"\1 0.0001",ATOMT_match)  # this make all atoms reaaaalllly small
