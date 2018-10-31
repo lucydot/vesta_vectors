@@ -76,13 +76,13 @@ def print_to_file(data,settings):
 
     VECTR_str=r"\1 "
     for i,atom in enumerate(data["vectors"]):
-        if np.linalg.norm(atom) > settings.cutoff: # only create vector if more than cutoff modulus
+        if np.linalg.norm(atom) > settings.cutoff[0]: # only create vector if more than cutoff modulus
             VECTR_str += "{0} {1} {2} {3} 0\n {0} 0 0 0 0\n 0 0 0 0 0\n".format(i+1,atom[0],atom[1],atom[2]) # create vectors
     
     VECTT_str=r"\1 "
     i=1
     for atom in data["vectors"]:
-        if np.linalg.norm(atom) > settings.cutoff: # only create vector if more than cutoff modulus
+        if np.linalg.norm(atom) > settings.cutoff[0]: # only create vector if more than cutoff modulus
             VECTT_str += "{0} {1} {2} {3} {4} 0\n".format(i,settings.radius[0], settings.colour[0], settings.colour[1], settings.colour[2]) # set vector radius and colour
             i+=1
 
@@ -105,7 +105,7 @@ def print_to_file(data,settings):
     data["output_data"] = re.sub(r'(BONDP.*POLYP)',BONDP_corrected,data["output_data"],flags=re.S)
     data["output_data"] = re.sub(r'(SBOND.*SITET)',SBOND_corrected,data["output_data"],flags=re.S)
     data["output_data"] = re.sub(r'(SITET.*VECTR)',SITET_corrected,data["output_data"],flags=re.S)
-    data["output_data"] = re.sub(r'(VECTS).*(FORMP)',r"\1 {} \n \2".format(settings.scale_factor),data["output_data"],flags=re.S) # set vector scale factor
+    data["output_data"] = re.sub(r'(VECTS).*(FORMP)',r"\1 {} \n \2".format(settings.scale_factor[0]),data["output_data"],flags=re.S) # set vector scale factor
     if settings.centre_atom: # centre the output structure around a particular atom
         data["output_data"] = re.sub(r'(BOUND).*(SBOND)',r"\1 \n {0} {1} {2} {3} {4} {5} \n 0 0 0 0 0 \n \2".format(data["min_bound"][0],data["max_bound"][0],data["min_bound"][1],data["max_bound"][1],data["min_bound"][2],data["max_bound"][2]),data["output_data"],flags=re.S)
 
@@ -124,15 +124,15 @@ def parse_args():
     parser.add_argument('--colour','-c',type=int, nargs=3,required=False,
         default=[255,0,0], help="vector colour (in RGB)")
     parser.add_argument('--radius','-r',type=float, nargs=1, required=False,
-        default=1.0, help="vector radius (in angstrom")
+        default=[0.5], help="vector radius (in angstrom")
     parser.add_argument('--atoms_removed','-ar',type=int,nargs='+',required=False,
         default=[], help='index position of atoms in initial structure which have been removed in final structure (indexing from one)')
     parser.add_argument('--atoms_inserted','-ai',type=int,nargs='+',required=False,
         default=[], help='index position of atoms which have been inserted into the final structure (indexing from one)')
     parser.add_argument('--cutoff', '-x', type=float, nargs=1, required=False,
-        default=0.1, help="vectors with a modulus below this value will not be displayed (in angstrom)")
+        default=[0.1], help="vectors with a modulus below this value will not be displayed (in angstrom)")
     parser.add_argument('--scale_factor', '-sf', type=float, nargs=1, required=False,
-        default=1.0, help='scale all vector moduli by this fixed amount')
+        default=[1.0], help='scale all vector moduli by this fixed amount')
     parser.add_argument('--centre_atom', '-ca', type=int, nargs=1, required=False,
         default=None, help='the output vesta structure is centred around an atom in the initial structure, specified by this index position (indexing from one)')
     
