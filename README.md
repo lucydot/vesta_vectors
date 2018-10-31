@@ -22,7 +22,7 @@ A Vesta file that contains vectors connecting the initial and final atomic posit
 -r  --radius   
       description: vector radius (in angstrom)
       type: float
-      default: 1.0
+      default: 0.5
       
 -c  --colour
       description: vector colour (in RGB)
@@ -68,8 +68,8 @@ When the output file `vectors.vesta` is opened in Vesta, you will see the follow
 
 ![](./images/image1.png)
 
-All the atoms and bonds are removed so that the vectors can be seen clearly.
-It is easy to adjust this, and other visuals, via Vesta - for example:
+All the atoms and bonds are removed so that the vectors can be seen clearly. Any displacement vector with magnitude below 0.1 Angstrom is not displayed - this can be adjusted with the `-x / --cutoff` argument.
+It is easy to make further adjustments to the output structure via Vesta - for example, I can turn off lighting effects, increase the size of the atoms, and adjust the z-axis boundary to give:
 
 ![](./images/image2.png)
 
