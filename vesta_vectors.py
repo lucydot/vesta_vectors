@@ -58,7 +58,7 @@ def calc_displacement(data):
 
     # We cannot know which route the atom took, but we assume that if the vector is over half a lattice length,
     # then the atom moved into the neighbouring cell.
-    displacement_frac_adjusted = [[-(1-x) if (x>0.5) else x for x in line] for line in displacement_frac]
+    displacement_frac_adjusted = [[-(1-abs(x)) if abs(x)>0.5 else x for x in line] for line in displacement_frac]
 
     # Final vectors are in angstrong
     data["vectors"] = np.multiply(displacement_frac_adjusted,data["cell_lengths"])
@@ -99,7 +99,7 @@ def print_to_file(data,settings):
     SBOND_corrected = re.sub(r'(\s+\d\s+\d\s+\d\s+\d\s+\d\s+)\d+\.\d+',r"\1 0.0001",SBOND_match) # make all bonds reaaaalllly small
 
     # substitute the above strings into the output data string
-    data["output_data"] = re.sub(r'(VECTR\n)',VECTR_str,data["final_data"])   
+    data["output_data"] = re.sub(r'(VECTR\n)',VECTR_str,data["initial_data"])   
     data["output_data"] = re.sub(r'(VECTT\n)',VECTT_str,data["output_data"])
     data["output_data"] = re.sub(r'(ATOMT.*SCENE)',ATOMT_corrected,data["output_data"],flags=re.S)
     data["output_data"] = re.sub(r'(BONDP.*POLYP)',BONDP_corrected,data["output_data"],flags=re.S)
