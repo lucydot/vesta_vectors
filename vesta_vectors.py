@@ -7,6 +7,7 @@ For constant cell volume and shape.
 import numpy as np
 import argparse
 import re
+from copy import deepcopy
 
 def read_in(settings):
 
@@ -17,7 +18,7 @@ def read_in(settings):
         data = open(filename,'r').read()
         combined_data.append(data)
         
-        struct_match=re.search(r"STRUC.*THERI",data,flags=re.S)[0]
+        struct_match=re.search(r"STRUC.*THERI",data,flags=re.S).group(0)
         pos_match=re.findall(r"\d+\D+\s+\D+\d+\s+\d+\.\d+\s+(.*?)\s+\d+\D+\s+\d+",struct_match)
 
         if pos_match:
@@ -86,16 +87,16 @@ def print_to_file(data,settings):
             VECTT_str += "{0} {1} {2} {3} {4} 0\n".format(i,settings.radius[0], settings.colour[0], settings.colour[1], settings.colour[2]) # set vector radius and colour
             i+=1
 
-    ATOMT_match = re.search(r"ATOMT.*SCENE",data["initial_data"],flags=re.S)[0]  
+    ATOMT_match = re.search(r"ATOMT.*SCENE",data["initial_data"],flags=re.S).group(0)  
     ATOMT_corrected = re.sub(r'([a-zA-Z]+\s+)\d+\.\d+',r"\1 0.0001",ATOMT_match)  # this make all atoms reaaaalllly small
 
-    SITET_match = re.search(r"SITET.*VECTR",data["initial_data"],flags=re.S)[0]
+    SITET_match = re.search(r"SITET.*VECTR",data["initial_data"],flags=re.S).group(0)
     SITET_corrected = re.sub(r'([a-zA-Z]+\d+\s+)\d+\.\d+',r"\1 0.0001",SITET_match) # this make all atoms reaaaalllly small
 
-    BONDP_match = re.search(r"BONDP.*POLYP",data["initial_data"],flags=re.S)[0]   
+    BONDP_match = re.search(r"BONDP.*POLYP",data["initial_data"],flags=re.S).group(0)   
     BONDP_corrected = re.sub(r'(\d+\s+\d+\s+)\d+\.\d+',r"\1 0.0001",BONDP_match)  # this makes all bonds reaaaalllly small
 
-    SBOND_match = re.search(r"SBOND.*SITET",data["initial_data"],flags=re.S)[0]
+    SBOND_match = re.search(r"SBOND.*SITET",data["initial_data"],flags=re.S).group(0)
     SBOND_corrected = re.sub(r'(\s+\d\s+\d\s+\d\s+\d\s+\d\s+)\d+\.\d+',r"\1 0.0001",SBOND_match) # make all bonds reaaaalllly small
 
     # substitute the above strings into the output data string
@@ -120,6 +121,8 @@ def parse_args():
     relaxation""")
     parser.add_argument('--filenames','-f',type=str, nargs=2, required=False,
         default=["initial.vesta","final.vesta"], help="name of initial and final vesta files"
+        )
+    parser.add_argument('--calculate_displacements','-cd',type=int, nargs='?', required=False,default=1, help="If 1, displacement between positions in Vesta files is calculated. Else, second file is assumed to contain vectors to render."
         )
     parser.add_argument('--colour','-c',type=int, nargs=3,required=False,
         default=[255,0,0], help="vector colour (in RGB)")
@@ -151,7 +154,10 @@ if __name__=="__main__":
     if settings.centre_atom:
         data = calc_bounds(data)
     data = delete_atoms(data)
-    data = calc_displacement(data)
+    if settings.calculate_displacements == 1:
+        data = calc_displacement(data)
+    else:
+        data["vectors"]=deepcopy(data["final_positions"])
 
     print ("Printing to file")
     print_to_file(data,settings)
