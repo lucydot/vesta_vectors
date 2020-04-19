@@ -19,6 +19,11 @@ A Vesta file that contains vectors connecting the initial and final atomic posit
       type: string  
       default: initial.vesta final.vesta
       
+-cd --calculate_displacements
+      description: If 1, displacement between positions in Vesta files is calculated. Else, second file is assumed to contain vectors to render.
+      type: int
+      default: 1
+
 -r  --radius   
       description: vector radius (in angstrom)
       type: float
