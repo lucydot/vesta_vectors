@@ -8,29 +8,32 @@ import numpy as np
 import argparse
 import re
 from copy import deepcopy
+import xyz
+import os
 
 def read_in(settings):
 
     combined_positions = []
     combined_data = []
 
-    for filename in [settings.filenames[0], settings.filenames[1]]:
-        data = open(filename,'r').read()
-        combined_data.append(data)
-        
-        struct_match=re.search(r"STRUC.*THERI",data,flags=re.S).group(0)
-        pos_match=re.findall(r"\d+\D+\s+\D+\d+\s+\d+\.\d+\s+(.*?)\s+\d+\D+\s+\d+",struct_match)
+    for i,filename in enumerate(settings.filenames):
+        if i==0 or os.path.splitext(filename)[1]=='.vesta':
+          data = open(filename,'r').read()
+          combined_data.append(data)
+          
+          struct_match=re.search(r"STRUC.*THERI",data,flags=re.S).group(0)
+          pos_match=re.findall(r"\d+\D+\s+\D+\d+\s+\d+\.\d+\s+(.*?)\s+\d+\D+\s+\d+",struct_match)
 
-        if pos_match:
-            positions = [[float(y) for y in x.split()] for x in pos_match]
-        else:
-            raise ValueError("Invalid file format (I am only able to parse Vesta files)")
-
-
+          if pos_match:
+              positions = [[float(y) for y in x.split()] for x in pos_match]
+          else:
+              raise ValueError("Invalid Vesta file!")
+        elif os.path.splitext(filename)[1]=='.xyz':
+          positions,ignore=xyz.read(filename)
+          positions=positions.tolist()
         combined_positions.append(positions)
     
     data = {"initial_data": combined_data[0],
-            "final_data": combined_data[1],
             "initial_positions": combined_positions[0], # positions in fractional coordinates
             "final_positions": combined_positions[1], # positions in fractional coordinates
             }
@@ -102,17 +105,20 @@ def print_to_file(data,settings):
     # substitute the above strings into the output data string
     data["output_data"] = re.sub(r'(VECTR\n)',VECTR_str,data["initial_data"])   
     data["output_data"] = re.sub(r'(VECTT\n)',VECTT_str,data["output_data"])
-    data["output_data"] = re.sub(r'(ATOMT.*SCENE)',ATOMT_corrected,data["output_data"],flags=re.S)
-    data["output_data"] = re.sub(r'(BONDP.*POLYP)',BONDP_corrected,data["output_data"],flags=re.S)
-    data["output_data"] = re.sub(r'(SBOND.*SITET)',SBOND_corrected,data["output_data"],flags=re.S)
-    data["output_data"] = re.sub(r'(SITET.*VECTR)',SITET_corrected,data["output_data"],flags=re.S)
+
+    if settings.hide_atoms == 1:
+        data["output_data"] = re.sub(r'(ATOMT.*SCENE)',ATOMT_corrected,data["output_data"],flags=re.S)
+        data["output_data"] = re.sub(r'(BONDP.*POLYP)',BONDP_corrected,data["output_data"],flags=re.S)
+        data["output_data"] = re.sub(r'(SBOND.*SITET)',SBOND_corrected,data["output_data"],flags=re.S)
+        data["output_data"] = re.sub(r'(SITET.*VECTR)',SITET_corrected,data["output_data"],flags=re.S)
     data["output_data"] = re.sub(r'(VECTS).*(FORMP)',r"\1 {} \n \2".format(settings.scale_factor[0]),data["output_data"],flags=re.S) # set vector scale factor
     if settings.centre_atom: # centre the output structure around a particular atom
         data["output_data"] = re.sub(r'(BOUND).*(SBOND)',r"\1 \n {0} {1} {2} {3} {4} {5} \n 0 0 0 0 0 \n \2".format(data["min_bound"][0],data["max_bound"][0],data["min_bound"][1],data["max_bound"][1],data["min_bound"][2],data["max_bound"][2]),data["output_data"],flags=re.S)
 
-    file_out = open('vectors.vesta','w+')
+    file_out = open(settings.outname,'w+')
     file_out.write(data["output_data"])
     file_out.close()
+    
 
 def parse_args():
 
@@ -138,7 +144,9 @@ def parse_args():
         default=[1.0], help='scale all vector moduli by this fixed amount')
     parser.add_argument('--centre_atom', '-ca', type=int, nargs=1, required=False,
         default=None, help='the output vesta structure is centred around an atom in the initial structure, specified by this index position (indexing from one)')
-    
+    parser.add_argument('--hide_atoms', '-ha', type=int, nargs='?', required=False, default=0, help="hide atoms")
+    parser.add_argument('--outname','-o',type=str,nargs='?',required=False,
+      default='vectors.vesta',help="output file name")
     args = parser.parse_args()
 
     return args
@@ -161,4 +169,4 @@ if __name__=="__main__":
 
     print ("Printing to file")
     print_to_file(data,settings)
-    print ("All done.")
+    print ("Saved output to {0}".format(os.path.abspath(settings.outname))
